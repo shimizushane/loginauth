@@ -4,15 +4,15 @@ import {
   MiddlewareConsumer,
   RequestMethod,
 } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { validateMiddleware } from './middleware/validateRequest';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { UserModule } from './modules/user.module';
+import { ShareModule } from './shared/shared.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [UserModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [UserModule, ShareModule, TypeOrmModule.forRoot()],
+  controllers: [],
+  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
