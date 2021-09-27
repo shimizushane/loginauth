@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validateMiddleware } from './middleware/validateRequest';
 import { ShareModule } from './shared/shared.module';
 import { UserModule } from './user/user.module';
+import { SessionModule } from './session/session.module';
 import config from './config/default';
 
 @Module({
@@ -25,6 +26,7 @@ import config from './config/default';
         configService.get('mysqlConfig') as TypeOrmModuleOptions,
       inject: [ConfigService],
     }),
+    SessionModule,
   ],
 })
 export class AppModule implements NestModule {
