@@ -2,6 +2,8 @@ version: "3.8"
 services:
   mysql_db:
     image: mysql:8.0.26
+    security_opt:
+      - seccomp:unconfined
     ports: 
       - "3306:3306"
     volumes:
