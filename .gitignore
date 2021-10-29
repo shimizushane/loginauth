@@ -2,6 +2,10 @@
 /dist
 /node_modules
 
+# Database
+/mongodb
+/mysql
+
 # Logs
 logs
 *.log

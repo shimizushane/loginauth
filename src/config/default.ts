@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+
 export default () => ({
   PORT: process.env.PORT,
   mysqlConfig: {
@@ -13,4 +15,6 @@ export default () => ({
   mongoConfig: {
     dbUri: process.env.MONGO_URI,
   },
+  PRIVATEKEY: readFileSync('key/private.key', 'utf-8'),
+  PUBLICKEY: readFileSync('key/public.key', 'utf-8'),
 });
