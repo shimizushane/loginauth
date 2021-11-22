@@ -6,7 +6,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    // console.log('context:', context);
+    console.log('context:', context);
 
     const ar = context.getArgs();
     console.log('args:', ar);

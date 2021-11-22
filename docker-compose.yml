@@ -11,7 +11,8 @@ services:
       - ./sql:/docker-entrypoint-initdb.d/
       - ./mysql/data:/var/lib/mysql
     environment: 
-      MYSQL_ROOT_PASSWORD: password  
+      TZ: Asia/Taipei  
+      MYSQL_ROOT_PASSWORD: password
   mongo_db:
     image: mongo:4.2.15
     restart: always
@@ -20,6 +21,7 @@ services:
     volumes:
       - ./mongodb/data:/data/db
     environment: 
+      TZ: Asia/Taipei  
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
     

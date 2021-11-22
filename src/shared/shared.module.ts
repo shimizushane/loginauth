@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { UserDtoValidationPipe } from 'src/pipes/userDtoValidation.pipe';
+import { AccountDtoValidationPipe } from 'src/pipes/accountDtoValidation.pipe';
 
 @Module({
-  providers: [UserDtoValidationPipe],
+  providers: [AccountDtoValidationPipe],
 })
 export class ShareModule {}

@@ -2,14 +2,19 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { UserModule } from 'src/user/user.module';
+import { AccountModule } from 'src/account/account.module';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthController } from './auth.controller';
+import { JwtStrategy } from './jwt.strategy';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Login } from './entities/login.entity';
+import { Token } from './entities/token.entity';
 
 @Module({
   imports: [
-    UserModule,
+    TypeOrmModule.forFeature([Login, Token]),
+    AccountModule,
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -18,7 +23,7 @@ import { AuthController } from './auth.controller';
           privateKey: configService.get('PRIVATEKEY'),
           publicKey: configService.get('PUBLICKEY'),
           signOptions: {
-            expiresIn: '6h',
+            expiresIn: '60s',
             algorithm: 'RS256',
           },
         };
@@ -27,7 +32,8 @@ import { AuthController } from './auth.controller';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, LocalStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy],
+  exports: [AuthService],
   controllers: [AuthController],
 })
 export class AuthModule {}

@@ -11,6 +11,7 @@ export default () => ({
     database: process.env.MYSQL_DATABASE,
     entities: ['dist/**/entities/*.entity.{ts,js}'],
     synchronize: true,
+    cache: true,
   },
   mongoConfig: {
     dbUri: process.env.MONGO_URI,

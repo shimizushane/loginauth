@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ShareModule } from './shared/shared.module';
-import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import config from './config/default';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AccountModule } from './account/account.module';
+import { UserInfoModule } from './user-info/user-info.module';
 
 @Module({
   imports: [
@@ -14,7 +15,6 @@ import { AppService } from './app.service';
       load: [config],
       isGlobal: true,
     }),
-    UserModule,
     ShareModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -23,6 +23,8 @@ import { AppService } from './app.service';
       inject: [ConfigService],
     }),
     AuthModule,
+    AccountModule,
+    UserInfoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
