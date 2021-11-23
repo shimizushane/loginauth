@@ -22,12 +22,12 @@ export class Login {
   @Column({
     default: 0,
   })
-  phone_count: number;
+  fail_count: number;
 
   @Column({
     default: 0,
   })
-  pc_count: number;
+  success_count: number;
 
   @Column({
     default: false,

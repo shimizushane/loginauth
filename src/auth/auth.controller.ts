@@ -16,10 +16,10 @@ export class AuthController {
     console.log('ip1:', req.connection.remoteAddress);
     console.log('ip1:', req.connection.remotePort);
     // 抓 header
+
+    // await this.authService.updateLoginInfo(req.connection.remoteAddress,)
     const result = await this.authService.createToken(req.user);
-    
-    await this.authService.updateLoginInfo(req.connection.remoteAddress,)
-    console.log('token:', result.access_token);
+    // console.log('token:', result.accessToken);
     return result;
   }
 }

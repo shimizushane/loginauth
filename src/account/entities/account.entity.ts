@@ -51,7 +51,7 @@ export class Account {
   @Column({
     default: false,
   })
-  validate_mobile_phone: boolean;
+  validate_phone: boolean;
 
   @OneToOne(() => Login, (login) => login.account)
   @JoinColumn()

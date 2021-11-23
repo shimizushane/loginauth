@@ -13,7 +13,7 @@ export class AccountService {
     private accountRepository: Repository<Account>,
     @InjectRepository(UserInfo)
     private userInfoRepository: Repository<UserInfo>,
-  ) {}
+  ) { }
 
   async create(createAccountDto: CreateAccountDto): Promise<any> {
     const isExist = await this.accountRepository.count({
@@ -26,15 +26,17 @@ export class AccountService {
       );
     }
 
-    const userInfo = new UserInfo();
     const account = new Account();
+    const userInfo = new UserInfo();
 
     account.email = createAccountDto.email;
     account.password = createAccountDto.password;
     account.userInfo = userInfo;
+    userInfo.account = account;
 
+    await this.accountRepository.save(account);
     await this.userInfoRepository.save(userInfo);
-    return this.accountRepository.save(account);
+    return this.accountRepository.findOne({ email: account.email });
   }
 
   findAll() {
@@ -54,7 +56,7 @@ export class AccountService {
   }
 
   findOne(id: number) {
-    return this.accountRepository.findOne(id);
+    return `This action returns a #${id} account`;
   }
 
   update(id: number, updateAccountDto: UpdateAccountDto) {
