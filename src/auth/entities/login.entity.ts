@@ -4,6 +4,7 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   Column,
+  JoinColumn,
   OneToOne,
   OneToMany,
 } from 'typeorm';
@@ -37,7 +38,7 @@ export class Login {
   @OneToOne(() => Account, (account) => account.login)
   account: Account;
 
-  @OneToMany(() => Token, (token) => token.token)
+  @OneToMany(() => Token, (token) => token.token, { cascade: true })
   tokens: string;
 
   @CreateDateColumn({

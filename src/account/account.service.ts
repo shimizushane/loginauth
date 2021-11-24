@@ -31,12 +31,9 @@ export class AccountService {
 
     account.email = createAccountDto.email;
     account.password = createAccountDto.password;
-    account.userInfo = userInfo;
-    userInfo.account = account;
+    account.user_info = userInfo;
 
-    await this.accountRepository.save(account);
-    await this.userInfoRepository.save(userInfo);
-    return this.accountRepository.findOne({ email: account.email });
+    return this.accountRepository.save(account);
   }
 
   findAll() {
@@ -46,7 +43,7 @@ export class AccountService {
   async findAccount(email: string): Promise<Account> {
     const account = await this.accountRepository.findOne({
       where: { email },
-      relations: ['login', 'userInfo'],
+      relations: ['login', 'user_info'],
     });
 
     if (account) {

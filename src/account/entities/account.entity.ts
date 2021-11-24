@@ -20,13 +20,18 @@ export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    length: 50,
+  })
   email: string;
 
-  @Column()
+  @Column({
+    length: 20,
+  })
   password: string;
 
   @Column({
+    length: 20,
     default: '',
   })
   username: string;
@@ -39,6 +44,7 @@ export class Account {
   role: AccountRole;
 
   @Column({
+    length: 20,
     nullable: true,
   })
   mobile_phone: string;
@@ -53,13 +59,13 @@ export class Account {
   })
   validate_phone: boolean;
 
-  @OneToOne(() => Login, (login) => login.account)
-  @JoinColumn()
+  @OneToOne(() => Login, (login) => login.account, { cascade: true })
+  @JoinColumn({ name: 'login_id' })
   login: Login;
 
-  @OneToOne(() => UserInfo, (userInfo) => userInfo.account)
-  @JoinColumn()
-  userInfo: UserInfo;
+  @OneToOne(() => UserInfo, (userInfo) => userInfo.account, { cascade: true })
+  @JoinColumn({ name: 'user_info_id' })
+  user_info: UserInfo;
 
   @CreateDateColumn({
     type: 'timestamp',

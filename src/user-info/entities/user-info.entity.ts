@@ -33,8 +33,7 @@ export class UserInfo {
   })
   address: string;
 
-  @OneToOne(() => Account, (account) => account.userInfo)
-  @JoinColumn()
+  @OneToOne(() => Account, (account) => account.user_info)
   account: Account;
 
   @CreateDateColumn({

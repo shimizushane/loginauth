@@ -9,7 +9,6 @@ export class AuthController {
   @UseGuards(AuthGuard('local')) // AuthGuard驗證完後，回丟，加在req裏面
   @Post('login')
   async login(@Request() req, @Headers() headers): Promise<any> {
-    console.log('login:', req);
     const { id } = req.user;
 
     console.log('headers:', headers['user-agent']);

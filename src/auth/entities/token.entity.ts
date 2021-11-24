@@ -1,6 +1,7 @@
 import {
   Entity,
   Column,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   PrimaryGeneratedColumn,
@@ -19,6 +20,7 @@ export class Token {
   id: number;
 
   @ManyToOne(() => Login, (login) => login.tokens)
+  @JoinColumn({ name: 'login_id' })
   token: string;
 
   @Column()

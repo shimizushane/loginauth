@@ -22,13 +22,16 @@ export class AuthService {
 
   async validateUser(email: string, mpassword: string): Promise<any> {
     const account = await this.accountService.findAccount(email);
-    let login = account.login;
+    let { login } = account;
+
+    console.log('account:', account);
 
     if (!login) {
       login = new Login();
-      login.account = account;
-      this.accountRepository.update(account.id, { login: login });
-      this.loginRepository.save(login);
+      const loginInfo = await this.loginRepository.save(login);
+      await this.accountRepository.update(account.id, {
+        login: loginInfo,
+      });
     }
 
     if (account && account.password != mpassword) {
@@ -36,11 +39,11 @@ export class AuthService {
       if (login.fail_count > 5) {
         login.locked = true;
       }
-      // this.loginRepository.update(account.login, login);
+      await this.loginRepository.update(account.login.id, login);
     } else if (account && account.password === mpassword) {
       const { password, ...result } = account;
       login.success_count += 1;
-      // this.loginRepository.update(account.login, login);
+      await this.loginRepository.update(account.login.id, login);
       return result;
     }
     return null;
