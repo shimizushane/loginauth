@@ -9,12 +9,12 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Login } from './entities/login.entity';
-import { Token } from './entities/token.entity';
+import { LoginInfo } from './entities/login_info.entity';
 import { Account } from 'src/account/entities/account.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Login, Token, Account]),
+    TypeOrmModule.forFeature([Login, LoginInfo, Account]),
     AccountModule,
     PassportModule,
     JwtModule.registerAsync({

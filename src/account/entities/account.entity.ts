@@ -59,11 +59,13 @@ export class Account {
   })
   validate_phone: boolean;
 
-  @OneToOne(() => Login, (login) => login.account, { cascade: true })
+  @OneToOne((type) => Login, (login) => login.account, { cascade: true })
   @JoinColumn({ name: 'login_id' })
   login: Login;
 
-  @OneToOne(() => UserInfo, (userInfo) => userInfo.account, { cascade: true })
+  @OneToOne((type) => UserInfo, (userInfo) => userInfo.account, {
+    cascade: true,
+  })
   @JoinColumn({ name: 'user_info_id' })
   user_info: UserInfo;
 

@@ -1,6 +1,7 @@
 import { Controller, Post, UseGuards, Request, Headers } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { Login } from './entities/login.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -9,16 +10,12 @@ export class AuthController {
   @UseGuards(AuthGuard('local')) // AuthGuard驗證完後，回丟，加在req裏面
   @Post('login')
   async login(@Request() req, @Headers() headers): Promise<any> {
-    const { id } = req.user;
+    const login: Login = req.user.login;
+    const clientAgent = headers['user-agent'];
+    const clientIp = req.connection.remoteAddress.replace(/^.*:/, '');
 
-    console.log('headers:', headers['user-agent']);
-    console.log('ip1:', req.connection.remoteAddress);
-    console.log('ip1:', req.connection.remotePort);
-    // 抓 header
-
-    // await this.authService.updateLoginInfo(req.connection.remoteAddress,)
     const result = await this.authService.createToken(req.user);
-    // console.log('token:', result.accessToken);
+    this.authService.updateLoginInfo(login, clientAgent, clientIp);
     return result;
   }
 }

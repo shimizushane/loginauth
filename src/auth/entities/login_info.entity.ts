@@ -10,7 +10,7 @@ import {
 import { Login } from './login.entity';
 
 @Entity()
-export class Token {
+export class LoginInfo {
   // 預想，pc登入踢pc，phone登入踢phone
   // MongoDB
   // @ObjectIdColumn()
@@ -19,15 +19,20 @@ export class Token {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Login, (login) => login.tokens)
-  @JoinColumn({ name: 'login_id' })
-  token: string;
-
   @Column()
   user_agent: string;
 
   @Column()
   ip: string;
+
+  @Column({
+    default: 1,
+  })
+  count: number;
+
+  @ManyToOne((type) => Login, (login) => login.login_info)
+  @JoinColumn({ name: 'login_id' })
+  login: Login;
 
   @CreateDateColumn({
     type: 'timestamp',

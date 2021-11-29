@@ -4,11 +4,10 @@ import {
   UpdateDateColumn,
   PrimaryGeneratedColumn,
   Column,
-  JoinColumn,
   OneToOne,
   OneToMany,
 } from 'typeorm';
-import { Token } from './token.entity';
+import { LoginInfo } from './login_info.entity';
 import { Account } from 'src/account/entities/account.entity';
 
 @Entity()
@@ -35,11 +34,11 @@ export class Login {
   })
   locked: boolean;
 
-  @OneToOne(() => Account, (account) => account.login)
+  @OneToOne((type) => Account, (account) => account.login)
   account: Account;
 
-  @OneToMany(() => Token, (token) => token.token, { cascade: true })
-  tokens: string;
+  @OneToMany((type) => LoginInfo, (logininfo) => logininfo.login)
+  login_info: LoginInfo[];
 
   @CreateDateColumn({
     type: 'timestamp',

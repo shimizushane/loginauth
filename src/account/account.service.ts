@@ -5,14 +5,13 @@ import { Repository } from 'typeorm';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { Account } from './entities/account.entity';
+import { Login } from 'src/auth/entities/login.entity';
 
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
-    @InjectRepository(UserInfo)
-    private userInfoRepository: Repository<UserInfo>,
   ) { }
 
   async create(createAccountDto: CreateAccountDto): Promise<any> {
@@ -28,10 +27,12 @@ export class AccountService {
 
     const account = new Account();
     const userInfo = new UserInfo();
+    const login = new Login();
 
     account.email = createAccountDto.email;
     account.password = createAccountDto.password;
     account.user_info = userInfo;
+    account.login = login;
 
     return this.accountRepository.save(account);
   }
