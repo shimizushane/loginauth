@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -14,6 +14,7 @@ import { Account } from 'src/account/entities/account.entity';
 
 @Module({
   imports: [
+    CacheModule.register(),
     TypeOrmModule.forFeature([Login, LoginInfo, Account]),
     AccountModule,
     PassportModule,

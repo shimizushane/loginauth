@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { AccountService } from 'src/account/account.service';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +13,7 @@ import { Login } from './entities/login.entity';
 import { Repository } from 'typeorm';
 import { LoginInfo } from './entities/login_info.entity';
 import { Account } from 'src/account/entities/account.entity';
+import { ConfigService } from '@nestjs/config';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -20,13 +28,15 @@ export class AuthService {
   private failAndWaitTime: number;
 
   constructor(
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
     @InjectRepository(Login)
     private loginRepository: Repository<Login>,
     @InjectRepository(LoginInfo)
     private login_infoRepository: Repository<LoginInfo>,
-
+    private configService: ConfigService,
     private readonly accountService: AccountService,
     private readonly jwtService: JwtService,
   ) {
@@ -105,12 +115,13 @@ export class AuthService {
     );
   }
 
-  async validateEmail() {
+  async resetPasswordByEmail() {
 
   }
 
-  async validatePhone() {
-    
+  async resetPasswordByPhone() {
+
   }
+
 
 }

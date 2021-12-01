@@ -7,25 +7,38 @@ import {
   Param,
   Delete,
   UsePipes,
+  Query,
+  Req,
+  Request,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { AccountDtoValidationPipe } from 'src/pipes/accountDtoValidation.pipe';
+import { ValidationPipe } from 'src/pipes/validation.pipe';
+import { ValidateCodeDto } from './dto/validate-code.dto';
+import { VerificationCodeDto } from './dto/verification-code.dto';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 
 @Controller('account')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) {}
+  constructor(private readonly accountService: AccountService) { }
+
+  @Post('validate')
+  @UsePipes(ValidationPipe)
+  validate(@Body() validateCodeDto: ValidateCodeDto) {
+    return this.accountService.validate(validateCodeDto);
+  }
 
   @Post()
-  @UsePipes(AccountDtoValidationPipe)
+  @UsePipes(ValidationPipe)
   create(@Body() createAccountDto: CreateAccountDto) {
     return this.accountService.create(createAccountDto);
   }
 
-  @Get()
-  findAll() {
-    return this.accountService.findAll();
+  @Get('verificationCode')
+  @UsePipes(ValidationPipe)
+  verificationCode(@Query() verificationCodeDto: VerificationCodeDto) {
+    return this.accountService.sendValidationCode(verificationCodeDto);
   }
 
   @Get(':id')
@@ -38,8 +51,9 @@ export class AccountController {
     return this.accountService.update(+id, updateAccountDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.accountService.remove(+id);
+  @Delete('delete')
+  @UsePipes(ValidationPipe)
+  remove(@Body() deleteAccountDto: DeleteAccountDto) {
+    return this.accountService.remove(deleteAccountDto);
   }
 }
