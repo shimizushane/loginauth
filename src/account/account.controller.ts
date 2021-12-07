@@ -6,54 +6,59 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
   Query,
-  Req,
-  Request,
 } from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { ValidationPipe } from 'src/pipes/validation.pipe';
 import { ValidateCodeDto } from './dto/validate-code.dto';
-import { VerificationCodeDto } from './dto/verification-code.dto';
+import { ReqVerifyCodeDto } from './dto/req-verify-code.dto';
 import { DeleteAccountDto } from './dto/delete-account.dto';
+import { AppResponse } from 'src/misc/app.response';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) { }
 
   @Post('validate')
-  @UsePipes(ValidationPipe)
-  validate(@Body() validateCodeDto: ValidateCodeDto) {
+  async validate(@Body() validateCodeDto: ValidateCodeDto) {
     return this.accountService.validate(validateCodeDto);
   }
 
-  @Post()
-  @UsePipes(ValidationPipe)
-  create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountService.create(createAccountDto);
+  @Post('register')
+  async create(@Body() createAccountDto: CreateAccountDto) {
+    await this.accountService.create(createAccountDto);
+    return new AppResponse('0000', 'account is registered');
   }
 
-  @Get('verificationCode')
-  @UsePipes(ValidationPipe)
-  verificationCode(@Query() verificationCodeDto: VerificationCodeDto) {
-    return this.accountService.sendValidationCode(verificationCodeDto);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accountService.findOne(+id);
+  @Get('reqVerifyCode')
+  async reqVerifyCode(@Query() reqVerifyCodeDto: ReqVerifyCodeDto) {
+    return this.accountService.sendValidationCode(reqVerifyCodeDto);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountService.update(+id, updateAccountDto);
+  async update(
+    @Param('id') id: string,
+    @Body()
+    updateAccountDto: UpdateAccountDto,
+  ) {
+    this.accountService.update(id, updateAccountDto);
+    return new AppResponse('0000', 'account is updated');
   }
 
-  @Delete('delete')
-  @UsePipes(ValidationPipe)
-  remove(@Body() deleteAccountDto: DeleteAccountDto) {
-    return this.accountService.remove(deleteAccountDto);
+  @Patch('/resetPassword/:id')
+  async resetPassword(
+    @Param('id') id: string,
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ) {
+    await this.accountService.resetPassword(id, resetPasswordDto.new_password);
+    return new AppResponse('0000', 'password is reseted');
+  }
+
+  @Delete('delete/:id')
+  async remove(@Param('id') id: string) {
+    await this.accountService.remove(id);
+    return new AppResponse('0000', 'account is delete');
   }
 }

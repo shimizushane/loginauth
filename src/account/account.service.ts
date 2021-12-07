@@ -15,8 +15,9 @@ import { Account } from './entities/account.entity';
 import { Login } from 'src/auth/entities/login.entity';
 import { ConfigService } from '@nestjs/config';
 import nodemailer from 'nodemailer';
-import { VerificationCodeDto } from './dto/verification-code.dto';
+import { ReqVerifyCodeDto } from './dto/req-verify-code.dto';
 import { DeleteAccountDto } from './dto/delete-account.dto';
+import { AppResponse } from 'src/misc/app.response';
 
 enum VerifyType {
   EMAIL = 'email',
@@ -30,10 +31,14 @@ export class AccountService {
     private cacheManager: Cache,
     @InjectRepository(Account)
     private accountRepository: Repository<Account>,
+    @InjectRepository(UserInfo)
+    private userInfoRepository: Repository<UserInfo>,
+    @InjectRepository(Login)
+    private loginRepository: Repository<Login>,
     private configService: ConfigService,
   ) { }
 
-  async create(createAccountDto: CreateAccountDto): Promise<any> {
+  async create(createAccountDto: CreateAccountDto): Promise<void> {
     const isExist = await this.accountRepository.count({
       email: createAccountDto.email,
     });
@@ -53,11 +58,7 @@ export class AccountService {
     account.user_info = userInfo;
     account.login = login;
 
-    return this.accountRepository.save(account);
-  }
-
-  findAll() {
-    return `This action returns all account`;
+    await this.accountRepository.save(account);
   }
 
   async findAccount(email: string): Promise<Account> {
@@ -72,22 +73,36 @@ export class AccountService {
     throw new HttpException('not found user', HttpStatus.NOT_FOUND);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  async update(id: string, updateAccountDto: UpdateAccountDto): Promise<void> {
+    this.accountRepository.update(id, updateAccountDto);
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
+  async resetPassword(id: string, password: string): Promise<void> {
+    this.accountRepository.update(id, { password });
   }
 
-  async remove(deleteAccountDto: DeleteAccountDto) {
+  async remove(id) {
+    const deleteAccount = await this.accountRepository.findOne({
+      where: { id },
+      relations: ['login', 'user_info'],
+    });
+    const deleteUserInfo = await this.userInfoRepository.findOne(
+      deleteAccount.user_info.id,
+    );
 
-    return `This action removes a account`;
+    const deleteLogin = await this.loginRepository.findOne(
+      deleteAccount.login.id,
+    );
+
+    await this.loginRepository.remove(deleteLogin);
+    await this.userInfoRepository.remove(deleteUserInfo);
   }
 
-  async sendValidationCode(verificationCodeDto: VerificationCodeDto) {
-    const { id, type } = verificationCodeDto;
-    let { value } = verificationCodeDto;
+  async sendValidationCode(
+    reqVerifyCodeDto: ReqVerifyCodeDto,
+  ): Promise<AppResponse> {
+    const { id, type } = reqVerifyCodeDto;
+    let { value } = reqVerifyCodeDto;
     let codeArr: Array<any> = await this.cacheManager.get(id);
 
     if (type === VerifyType.EMAIL) {
@@ -127,14 +142,11 @@ export class AccountService {
         text: `驗證碼：${code}`,
       };
 
-      await transporter.verify();
+      await transporter.verify(); // 之後要刪除。確認mail server能運行。
       await transporter.sendMail(options);
-
-      return {
-        statusCode: '0000',
-        message: 'already send validate mail',
-      };
+      return new AppResponse('0000', 'already send validate code to email');
     } else if (type === VerifyType.PHONE) {
+      return new AppResponse('0000', 'already send validate code to phone');
     }
   }
 
@@ -168,11 +180,20 @@ export class AccountService {
     );
   }
 
-  async edit() {
+  async checkPassword(id: string, password: string): Promise<void> {
+    const [accounts, count] = await this.accountRepository.findAndCount({
+      id,
+    });
 
-  }
+    if (count != 1) {
+      throw new HttpException(
+        'account is none or more than one',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
-  async resetPassword() {
-
+    if (accounts[0].password != password) {
+      throw new HttpException('password is wrong', HttpStatus.BAD_REQUEST);
+    }
   }
 }

@@ -97,7 +97,8 @@ export class AuthService {
     let logininfo = await this.login_infoRepository.findOne({
       user_agent: clientAgent,
       ip: clientIp,
-    });
+      login: login,
+    }); // 要搜尋login，非login_info
 
     if (typeof logininfo === 'undefined') {
       logininfo = new LoginInfo();

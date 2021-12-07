@@ -5,7 +5,7 @@ enum VerifyType {
   PHONE = 'phone',
 }
 
-export class VerificationCodeDto {
+export class ReqVerifyCodeDto {
   @IsNotEmpty()
   @IsString()
   id: string;

@@ -30,7 +30,9 @@ export class LoginInfo {
   })
   count: number;
 
-  @ManyToOne((type) => Login, (login) => login.login_info)
+  @ManyToOne((type) => Login, (login) => login.login_info, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'login_id' })
   login: Login;
 
